@@ -1,23 +1,39 @@
 import 'package:flutter/material.dart';
 
-class ServiceCenterDetailsPage extends StatelessWidget {
+class ServiceCenterDetailsPage extends StatefulWidget {
   final String name;
+  final String location;
   final String imageUrl;
   final double rating;
   final List<String> services;
 
   ServiceCenterDetailsPage({
     required this.name,
+    required this.location,
     required this.imageUrl,
     required this.rating,
     required this.services,
   });
 
   @override
+  _ServiceCenterDetailsPageState createState() => _ServiceCenterDetailsPageState();
+}
+
+class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
+  List<bool> selectedServices = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the list of selected services with false values
+    selectedServices = List.generate(widget.services.length, (index) => false);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(name),
+        title: Text(widget.name),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -48,7 +64,7 @@ class ServiceCenterDetailsPage extends StatelessWidget {
                     bottomRight: Radius.circular(12.0),
                   ),
                   child: Image.network(
-                    imageUrl,
+                    widget.imageUrl,
                     width: double.infinity,
                     height: 120.0,
                     fit: BoxFit.cover,
@@ -62,7 +78,7 @@ class ServiceCenterDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Rating: $rating',
+                      'Rating: ${widget.rating}',
                       style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 8.0),
@@ -73,12 +89,27 @@ class ServiceCenterDetailsPage extends StatelessWidget {
                     SizedBox(height: 8.0),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: services
-                          .map((service) => Text(
-                                '- $service',
-                                style: TextStyle(fontSize: 16.0),
-                              ))
-                          .toList(),
+                      children: List.generate(widget.services.length, (index) {
+                        return CheckboxListTile(
+                          title: Text(widget.services[index]),
+                          value: selectedServices[index],
+                          onChanged: (value) {
+                            setState(() {
+                              selectedServices[index] = value!;
+                            });
+                          },
+                        );
+                      }),
+                    ),
+                    SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle the submit button click
+                        // You can access selectedServices list to get the selected services
+                        // For example, print the selected services:
+                      
+                      },
+                      child: Text('Order'),
                     ),
                   ],
                 ),
@@ -88,5 +119,16 @@ class ServiceCenterDetailsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+extension IterableExtensions<T> on Iterable<T> {
+  Iterable<T> whereIndexed(bool Function(int index, T element) test) sync* {
+    var index = 0;
+    for (final element in this) {
+      if (test(index, element)) {
+        yield element;
+      }
+      index++;
+    }
   }
 }
