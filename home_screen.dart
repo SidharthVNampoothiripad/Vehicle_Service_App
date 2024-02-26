@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'service_center_card.dart';
 import 'authentication_page.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'search_page.dart'; // Import the newly created SearchPage
+import 'search_page.dart'; 
+import 'carousel.dart'; // Import the CustomCarousel widget
 
 class CarServiceHomePage extends StatefulWidget {
   @override
@@ -29,7 +29,7 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SearchPage()), // Navigate to the SearchPage
+                MaterialPageRoute(builder: (context) => SearchPage()),
               );
             },
           ),
@@ -46,56 +46,9 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
       ),
       body: ListView(
         children: <Widget>[
-         // Carousel Slider
-Padding(
-  padding: EdgeInsets.all(16.0),
-  child: Text(
-    'Services',
-    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-  ),
-),
-CarouselSlider(
-  items: [
-    // Add your carousel items here
-    ClipRRect(
-      borderRadius: BorderRadius.circular(12.0),
-      child: Image.network(
-        'https://plus.unsplash.com/premium_photo-1661384383060-247be4fec056?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2FyJTIwY2xlYW5pbmd8ZW58MHx8MHx8fDA%3D',
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
-    ),
-    ClipRRect(
-      borderRadius: BorderRadius.circular(12.0),
-      child: Image.network(
-        'https://plus.unsplash.com/premium_photo-1682141708282-3a4f7023e1bb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FyJTIwYmF0dGVyeXxlbnwwfHwwfHx8MA%3D%3D',
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
-    ),
-    ClipRRect(
-      borderRadius: BorderRadius.circular(12.0),
-      child: Image.network(
-        'https://images.unsplash.com/photo-1526459915562-c5ca724b1d02?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2FyJTIwd2luZHNoaWVsZHxlbnwwfHwwfHx8MA%3D%3D',
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
-    ),
-    ClipRRect(
-      borderRadius: BorderRadius.circular(12.0),
-      child: Image.network(
-        'https://images.unsplash.com/photo-1592318348310-f31b61a931c8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FyJTIwYmF0dGVyeXxlbnwwfHwwfHx8MA%3D%3D',
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
-    ),
-  ],
-  options: CarouselOptions(
-    height: 100.0,
-    enlargeCenterPage: true,
-    enableInfiniteScroll: true,
-  ),
-),
+          // Add the CustomCarousel widget
+          CustomCarousel(),
+          
           Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
@@ -109,7 +62,7 @@ CarouselSlider(
             rating: 4.5,
             services: ['Oil Change', 'Tire Rotation'],
           ),
-          ServiceCenterCard(
+           ServiceCenterCard(
             name: 'Service Center B',
             imageUrl: 'https://plus.unsplash.com/premium_photo-1676998430827-aee8e597b013?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGNhciUyMHdvcmtzaG9wfGVufDB8fDB8fHww',
             rating: 4.2,
@@ -139,3 +92,4 @@ CarouselSlider(
     );
   }
 }
+      
