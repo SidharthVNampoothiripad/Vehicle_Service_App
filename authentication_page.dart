@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
+import 'signup_page.dart';
 
 class AuthenticationPage extends StatelessWidget {
   @override
@@ -27,9 +28,13 @@ class AuthenticationPage extends StatelessWidget {
               child: Text('Login'),
             ),
             ElevatedButton(
-              onPressed: () {
-                // Perform authentication logic for Sign Up
-                // For example, you can use Firebase Authentication
+              onPressed: () { // Navigate to the Login Page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignUpPage(),
+                  ),
+                );
               },
               child: Text('Sign Up'),
             ),
