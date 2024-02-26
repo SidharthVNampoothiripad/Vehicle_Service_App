@@ -6,7 +6,7 @@ void main() => runApp(CarServiceApp());
 class CarServiceApp extends StatelessWidget {
   // Simulate some initialization process
   Future<void> _initializeApp() async {
-    await Future.delayed(Duration(seconds: 5)); // Simulating a delay of 2 seconds
+    await Future.delayed(Duration(seconds: 2)); // Simulating a delay of 2 seconds
   }
 
   @override
@@ -31,12 +31,21 @@ class CarServiceApp extends StatelessWidget {
         } else {
           // Show a loading indicator while waiting for initialization to complete
           return MaterialApp(
-            home: Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
+  debugShowCheckedModeBanner: false,
+  home: Scaffold(
+    body: Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(
+            'https://images.unsplash.com/photo-1595521488367-9b130f86bbe3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGNhciUyMGltYWdlJTIwcG90cmFpdHxlbnwwfDF8MHx8fDA%3D', // Replace with your actual image URL
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+    ),
+  ),
+);
+
         }
       },
     );
