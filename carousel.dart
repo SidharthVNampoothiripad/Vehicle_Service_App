@@ -19,23 +19,23 @@ class CustomCarousel extends StatelessWidget {
           items: [
             CarouselItem(
               imageUrl:
-                  'https://plus.unsplash.com/premium_photo-1661384383060-247be4fec056?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2FyJTIwY2xlYW5pbmd8ZW58MHx8MHx8fDA%3D',
-              selectedService: 'Oil Change',
+                  'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FyJTIwd2FzaHxlbnwwfDB8MHx8fDA%3D',
+              selectedService: 'Car Wash',
             ),
             CarouselItem(
               imageUrl:
-                  'https://plus.unsplash.com/premium_photo-1682141708282-3a4f7023e1bb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FyJTIwYmF0dGVyeXxlbnwwfHwwfHx8MA%3D%3D',
-              selectedService: 'Brake Inspection',
+                  'https://plus.unsplash.com/premium_photo-1661717357358-67ae75ca57cd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FyJTIwZW5naW5lfGVufDB8MHwwfHx8MA%3D%3D',
+              selectedService: 'Engine',
             ),
             CarouselItem(
               imageUrl:
-                  'https://images.unsplash.com/photo-1526459915562-c5ca724b1d02?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2FyJTIwd2luZHNoaWVsZHxlbnwwfHwwfHx8MA%3D%3D',
-              selectedService: 'Engine Tune-up',
+                  'https://plus.unsplash.com/premium_photo-1663040170005-2c302347d703?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FyJTIwdHlyZSUyMHNlcnZpY2V8ZW58MHwwfDB8fHww',
+              selectedService: 'Tyre ',
             ),
             CarouselItem(
               imageUrl:
-                  'https://images.unsplash.com/photo-1592318348310-f31b61a931c8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FyJTIwYmF0dGVyeXxlbnwwfHwwfHx8MA%3D%3D',
-              selectedService: 'Other Service',
+                  'https://images.unsplash.com/photo-1697136646544-c9bd04d8bf98?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2FyJTIwY2hhc3Npc3xlbnwwfDB8MHx8fDA%3D',
+              selectedService: 'Chassis',
             ),
           ],
           options: CarouselOptions(
@@ -69,10 +69,30 @@ class CarouselItem extends StatelessWidget {
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12.0),
-        child: Image.network(
-          imageUrl,
-          width: double.infinity,
-          fit: BoxFit.cover,
+        child: Stack(
+          children: [
+            Image.network(
+              imageUrl,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Center(
+                child: Text(
+                  selectedService,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
