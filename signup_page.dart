@@ -64,12 +64,15 @@ class _SignUpPageState extends State<SignUpPage> {
                   decoration: InputDecoration(
                     labelText: 'Location',
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Location is required';
-                    }
-                    return null;
-                  },
+                 validator: (value) {
+  if (value == null || value.isEmpty) {
+    return 'Location is required';
+  } else if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+    return 'Location should only contain alphabets';
+  }
+  return null;
+},
+
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 SizedBox(height: 12.0),
@@ -99,6 +102,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     } else if (value.length < 8) {
                       return 'Password must be at least 8 characters';
                     }
+                    else if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+                    return 'Password must contain at least one special character';
+  }
                     return null;
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
