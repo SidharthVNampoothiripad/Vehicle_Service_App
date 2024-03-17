@@ -100,7 +100,7 @@ class _SignupPageState extends State<SignupPage> {
                       print('Failed to sign up: $e');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Failed to sign up. Please try again.'),
+                          content: Text('Email already used.'),
                         ),
                       );
                     }
