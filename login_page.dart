@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               fillColor: Colors.purple.withOpacity(0.1),
               filled: true,
-              prefixIcon: const Icon(Icons.person),
+              prefixIcon: const Icon(Icons.email),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -129,25 +129,18 @@ class _LoginPageState extends State<LoginPage> {
 
                   // Get user UID for demonstration
                  String uid = userCredential.user!.uid;
-    print('User UID: $uid');
+                print('User UID: $uid');
   } catch (e) {
     // Handle login failure (incorrect credentials)
     print('Login failed: $e');
     // Show error message to user
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Failed to sign in. Please try again.'),
+        content: Text('Incorrect Password. Please try again'),
       ),
     );
   }
-} else {
-  // If validation fails, show error message to user
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Please enter valid email and password.'),
-    ),
-  );
-}
+} 
             },
             style: ElevatedButton.styleFrom(
               shape: const StadiumBorder(),
