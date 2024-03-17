@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'login_page.dart';
 
-class SignUpPage extends StatefulWidget {
+class SignupPage extends StatefulWidget {
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  _SignupPageState createState() => _SignupPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _phoneNumberController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+class _SignupPageState extends State<SignupPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -19,138 +19,110 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         title: Text('Sign Up'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: _nameController,
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: TextFormField(
+                  controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'Name',
+                    labelText: 'Email',
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.email),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Name is required';
-                    } else if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(value)) {
-                      return 'Name should not contain numbers';
+                      return 'Please enter your email';
                     }
                     return null;
                   },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
-                SizedBox(height: 12.0),
-                TextFormField(
-                  controller: _phoneNumberController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Phone number is required';
-                    } else if (value.length != 10 || int.tryParse(value) == null) {
-                      return 'Phone number should have only 10 digits';
-                    }
-                    return null;
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
+              ),
+              SizedBox(height: 16.0),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(18),
                 ),
-                SizedBox(height: 12.0),
-                TextFormField(
-                  controller: _locationController,
-                  decoration: InputDecoration(
-                    labelText: 'Location',
-                  ),
-                 validator: (value) {
-  if (value == null || value.isEmpty) {
-    return 'Location is required';
-  } else if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
-    return 'Location should only contain alphabets';
-  }
-  return null;
-},
-
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                SizedBox(height: 12.0),
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Username is required';
-                    }
-                    return null;
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                SizedBox(height: 12.0),
-                TextFormField(
+                child: TextFormField(
                   controller: _passwordController,
-                  obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.password_rounded),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password is required';
-                    } else if (value.length < 8) {
-                      return 'Password must be at least 8 characters';
-                    }
-                    else if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-                    return 'Password must contain at least one special character';
-  }
-                    return null;
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                SizedBox(height: 12.0),
-                TextFormField(
-                  controller: _confirmPasswordController,
                   obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Confirm Password is required';
-                    } else if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return 'Please enter your password';
                     }
                     return null;
                   },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
-                SizedBox(height: 20.0),
-                ElevatedButton(
-                  onPressed: () {
-                    // Check if the form is valid before proceeding
-                    if (Form.of(context).validate()) {
-                      // Perform signup logic
-                      // For demonstration purposes, we will print the form data
-                      print('Name: ${_nameController.text}');
-                      print('Phone Number: ${_phoneNumberController.text}');
-                      print('Location: ${_locationController.text}');
-                      print('Username: ${_usernameController.text}');
-                      print('Password: ${_passwordController.text}');
-                      print('Confirm Password: ${_confirmPasswordController.text}');
+              ),
+              SizedBox(height: 32.0),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    try {
+                      // Sign up user with email and password
+                      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                      );
 
-                      // Handle successful signup, e.g., navigate to home page
-                      Navigator.pop(context);
+                      // Navigate to login page after successful signup
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                        ),
+                      );
+                    } catch (e) {
+                      // Handle signup errors
+                      print('Failed to sign up: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to sign up. Please try again.'),
+                        ),
+                      );
                     }
-                  },
-                  child: Text('Submit'),
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ),
+                  backgroundColor: Colors.purple,
                 ),
-              ],
-            ),
+                child: Text(
+                  'Sign Up',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
