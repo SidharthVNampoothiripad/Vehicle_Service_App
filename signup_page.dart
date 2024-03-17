@@ -40,12 +40,16 @@ class _SignupPageState extends State<SignupPage> {
                     border: InputBorder.none,
                     prefixIcon: Icon(Icons.email),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    return null;
-                  },
+                 validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Email is required';
+              } else if (!RegExp(
+                      r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+                  .hasMatch(value)) {
+                return 'Enter a valid email address';
+              }
+              return null;
+            },
                 ),
               ),
               SizedBox(height: 16.0),
@@ -64,11 +68,13 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   obscureText: true,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
-                  },
+              if (value == null || value.isEmpty) {
+                return 'Password is required';
+              } else if (value.length < 6) {
+                return 'Password must be at least 6 characters';
+              }
+              return null;
+            },
                 ),
               ),
               SizedBox(height: 32.0),
