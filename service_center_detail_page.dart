@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hellogram/home_screen.dart';
 
 class ServiceCenterDetailsPage extends StatefulWidget {
   final String name;
@@ -20,6 +22,7 @@ class ServiceCenterDetailsPage extends StatefulWidget {
 }
 
 class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   List<bool> selectedServices = [];
 
   @override
@@ -102,15 +105,41 @@ class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
                       }),
                     ),
                     SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Handle the submit button click
-                        // You can access selectedServices list to get the selected services
-                        // For example, print the selected services:
-                      
-                      },
-                      child: Text('Order'),
-                    ),
+ElevatedButton(
+  onPressed: () async {
+    if (selectedServices.any((service) => service == true)) {
+      try {
+        // Construct a list of selected services along with the service center name
+        List<Map<String, dynamic>> selectedServicesWithCenterName = selectedServices
+          .asMap()
+          .entries
+          .where((entry) => entry.value)
+          .map((entry) => {
+            'service_center_name': widget.name, // Add the service center name
+            'service_name': widget.services[entry.key], // Add the service name
+          })
+          .toList();
+
+        // Save the selected services to Firestore
+        await FirebaseFirestore.instance.collection('services_offered').add({
+          'selected_services': selectedServicesWithCenterName,
+        });
+        
+        // Navigate back to the login page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => CarServiceHomePage()),
+        );
+      } catch (error) {
+        print('Error: $error');
+      }
+    } else {
+      print('Please select at least one service');
+    }
+  },
+  child: Text('Order'),
+),
+
                   ],
                 ),
               ),
