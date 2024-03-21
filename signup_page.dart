@@ -19,19 +19,19 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _locationController = TextEditingController();// New controller for location
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Sign Up'),
-      ),
-      body: Padding(
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Sign Up'),
+    ),
+    body: SingleChildScrollView(
+      child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -214,6 +214,7 @@ class _SignupPageState extends State<SignupPage> {
           ),
         ),
       ),
+    ),
     );
   }
 
