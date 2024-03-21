@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hellogram/home_screen.dart';
 import 'login_page.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignupPage extends StatefulWidget {
@@ -169,7 +168,7 @@ Widget build(BuildContext context) {
                         email: _emailController.text,
                         password: _passwordController.text,
                       );
-                    await FirebaseFirestore.instance.collection('Users').doc(_nameController.text).set({
+                    await FirebaseFirestore.instance.collection('Users').doc(_emailController.text).set({
                           'Name': _nameController.text,
                           'Email':_emailController.text,
                           'Phone Number': _phoneNumberController.text,
