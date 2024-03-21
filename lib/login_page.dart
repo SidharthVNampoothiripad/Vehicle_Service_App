@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
 );
   }
 
-  _header(context) {
+    Widget _header(context) {
     return const Column(
       children: [
         Text(
@@ -118,7 +118,13 @@ class _LoginPageState extends State<LoginPage> {
                     email: _emailController.text,
                     password: _passwordController.text,
                   );
-
+                 // Get the current user
+                  User? user = userCredential.user;
+                  // Check if user is not null and display name is not set
+                  if (user != null && user.displayName == null) {
+                    // Set the display name in Firebase Auth
+                    await user.updateDisplayName(_emailController.text);
+                  }
                   // If login is successful, move to the home page
                   Navigator.push(
                     context,
