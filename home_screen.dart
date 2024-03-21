@@ -1,9 +1,9 @@
 // car_service_home_page.dart
 import 'package:flutter/material.dart';
 import 'service_center_card.dart';
-import 'authentication_page.dart';
 import 'search_page.dart'; 
 import 'carousel.dart';
+import 'user_details.dart';
 
 class CarServiceHomePage extends StatefulWidget {
   @override
@@ -22,7 +22,7 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Color.fromARGB(255, 250, 223, 255),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -38,13 +38,15 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AuthenticationPage()),
+                MaterialPageRoute(builder: (context) => UserInfo()),
               );
             },
           ),
         ],
       ),
-      body: ListView(
+      body: Container(
+        color: Color.fromARGB(255, 207, 173, 210),
+        child: ListView(
         children: <Widget>[
           CustomCarousel(),
           
@@ -93,6 +95,7 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
           // Add more ServiceCenterCard widgets for other service centers
         ],
       ),
+      )
     );
   }
 }
