@@ -8,6 +8,8 @@ class UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _locationController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('User Information'),
@@ -15,7 +17,7 @@ class UserInfo extends StatelessWidget {
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Users')
-            .doc(FirebaseAuth.instance.currentUser!.email) // Use display name as document ID
+            .doc(FirebaseAuth.instance.currentUser!.email) // Use email as document ID
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -27,26 +29,48 @@ class UserInfo extends StatelessWidget {
 
           var userData = snapshot.data!.data() as Map<String, dynamic>;
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                UserInfoItem(label: 'Name', value: userData['Name'] ?? ''),
-                UserInfoItem(label: 'Email', value: userData['Email'] ?? ''),
-                UserInfoItem(label: 'Phone Number', value: userData['Phone Number'] ?? ''),
-                UserInfoItem(label: 'Location', value: userData['location'] ?? ''),
-                ElevatedButton(
-                  onPressed: () async {
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
-                  },
-                  child: Text('Sign Out'),
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.height * 0.7,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(18),
                 ),
-              ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    UserInfoItem(label: 'Name', value: userData['Name'] ?? ''),
+                    UserInfoItem(label: 'Email', value: userData['Email'] ?? ''),
+                    UserInfoItem(label: 'Phone Number', value: userData['Phone Number'] ?? ''),
+                    UserInfoItem(label: 'Location', value: userData['location'] ?? ''),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        backgroundColor: Colors.purple, // Violet color
+                        foregroundColor: Colors.white, // White text color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20), // Rounded edges
+                        ),
+                      ),
+                      child: Text('Sign Out', style: TextStyle(fontSize: 14.0)),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         },
@@ -66,18 +90,23 @@ class UserInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17.0, // Increased font size
+          ),
         ),
-      ),
-      subtitle: Text(
-        value,
-        style: TextStyle(fontSize: 16.0),
-      ),
+        SizedBox(height:15.0),
+        Text(
+          value,
+          style: TextStyle(fontSize: 15.0), // Increased font size
+        ),
+        SizedBox(height: 10.0),
+      ],
     );
   }
 }
