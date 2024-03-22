@@ -5,11 +5,8 @@ import 'login_page.dart';
 
 class UserInfo extends StatelessWidget {
   const UserInfo({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _locationController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('User Information'),
