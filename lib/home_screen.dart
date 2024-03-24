@@ -44,6 +44,46 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
           ),
         ],
       ),
+    drawer: Drawer(
+  child: ListView(
+    padding: EdgeInsets.zero,
+    children: <Widget>[
+      SizedBox(
+        height: 60, // Adjust the height of the DrawerHeader
+        child: DrawerHeader(
+           padding: EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 116, 47, 129),
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+              child: Text(
+                'FixFlow',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18, // Adjust the font size as needed
+                ),
+            ),
+          ),
+        ),
+      ),
+
+            ListTile(
+              title: Text('My Orders'),
+              onTap: () {
+                // Add navigation logic here
+              },
+            ),
+            ListTile(
+              title: Text('Favourites'),
+              onTap: () {
+                // Add navigation logic here
+              },
+            ),
+            // Add more ListTiles for additional items in the drawer
+          ],
+        ),
+      ),
       body: Container(
         color: Color.fromARGB(255, 207, 173, 210),
         child: ListView(

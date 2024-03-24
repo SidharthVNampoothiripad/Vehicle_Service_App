@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hellogram/home_screen.dart';
+import 'package:hellogram/upi_payment.dart';
 
 class ServiceCenterDetailsPage extends StatefulWidget {
   final String name;
@@ -100,27 +100,36 @@ class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
                       }),
                     ),
                     SizedBox(height: 16.0),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                        backgroundColor: Colors.purple, // Violet color
-                        foregroundColor: Colors.white, // White text color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // Rounded edges
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Total Amount:',
+                          style: TextStyle(fontSize: 16.0),
                         ),
-                      ),
+                        SizedBox(width: 8.0),
+                        Text(
+                          '₹1500',
+                          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                   SizedBox(height: 16.0),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: ElevatedButton(
                      onPressed: () async {
+  // Check if at least one service is selected
   // Get current user's email
   User? user = FirebaseAuth.instance.currentUser;
   String? userEmail = user?.email;
-
-  // Check if at least one service is selected
-  if (selectedServices.isEmpty) {
+  bool isAnyServiceSelected = selectedServices.any((isSelected) => isSelected);
+  if (!isAnyServiceSelected) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('At least one service should be selected')),
     );
-  } else if (userEmail != null) {
+    return; // Prevent further execution
+  } if (userEmail != null) {
     List<String> selectedServiceNames = [];
     for (int i = 0; i < selectedServices.length; i++) {
       if (selectedServices[i]) {
@@ -142,13 +151,9 @@ class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
           'Selected Services': selectedServiceNames,
         });
 
-        // Handle successful order, e.g., navigate to home page
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ordered successfully')),
-        );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => CarServiceHomePage()),
+          MaterialPageRoute(builder: (context) => UpiPaymentPage()),
         );
       } else {
         // User data not found
@@ -161,7 +166,16 @@ class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
     }
   }
 },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        backgroundColor: Colors.purple, // Violet color
+                        foregroundColor: Colors.white, // White text color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20), // Rounded edges
+                        ),
+                      ),
                       child: Text('Order', style: TextStyle(fontSize: 14.0)),
+                    ),
                     ),
                   ],
                 ),
@@ -171,17 +185,5 @@ class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
         ),
       ),
     );
-  }
-}
-
-extension IterableExtensions<T> on Iterable<T> {
-  Iterable<T> whereIndexed(bool Function(int index, T element) test) sync* {
-    var index = 0;
-    for (final element in this) {
-      if (test(index, element)) {
-        yield element;
-      }
-      index++;
-    }
   }
 }

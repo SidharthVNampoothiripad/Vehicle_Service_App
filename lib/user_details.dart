@@ -31,7 +31,7 @@ class UserInfo extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.height * 0.7,
+                height: MediaQuery.of(context).size.height * 0.6, // Increased height
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: Colors.purple.withOpacity(0.1),
@@ -46,24 +46,26 @@ class UserInfo extends StatelessWidget {
                     UserInfoItem(label: 'Email', value: userData['Email'] ?? ''),
                     UserInfoItem(label: 'Phone Number', value: userData['Phone Number'] ?? ''),
                     UserInfoItem(label: 'Location', value: userData['location'] ?? ''),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await FirebaseAuth.instance.signOut();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                        backgroundColor: Colors.purple, // Violet color
-                        foregroundColor: Colors.white, // White text color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20), // Rounded edges
+                    SizedBox(height: 20), // Increased spacing
+                    Center( // Centered sign-out button
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginPage()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                          backgroundColor: Colors.purple, // Violet color
+                          foregroundColor: Colors.white, // White text color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20), // Rounded edges
+                          ),
                         ),
+                        child: Text('Sign Out', style: TextStyle(fontSize: 17.0)),
                       ),
-                      child: Text('Sign Out', style: TextStyle(fontSize: 14.0)),
                     ),
                   ],
                 ),
@@ -94,15 +96,15 @@ class UserInfoItem extends StatelessWidget {
           label,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 17.0, // Increased font size
+            fontSize: 19.0, // Increased font size
           ),
         ),
-        SizedBox(height:15.0),
+        SizedBox(height: 8.0), // Adjusted height
         Text(
           value,
-          style: TextStyle(fontSize: 15.0), // Increased font size
+          style: TextStyle(fontSize: 17.0), // Increased font size
         ),
-        SizedBox(height: 10.0),
+        SizedBox(height: 8.0), // Adjusted height
       ],
     );
   }

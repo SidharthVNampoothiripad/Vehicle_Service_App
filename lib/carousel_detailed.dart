@@ -1,6 +1,6 @@
-// carousel_detailed.dart
 import 'package:flutter/material.dart';
-import 'service_centre_link_card.dart'; // Import the new file
+import 'package:hellogram/service_center_detail_page.dart';
+import 'service_centre_link_card.dart'; // Import the new file // Import the service center details page
 
 class CarouselDetailed extends StatelessWidget {
   final String selectedService;
@@ -28,7 +28,24 @@ class CarouselDetailed extends StatelessWidget {
           ? ListView.builder(
               itemCount: serviceCenters.length,
               itemBuilder: (context, index) {
-                return ServiceCenterLinkCard(serviceCenterName: serviceCenters[index]);
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to the ServiceCenterDetailsPage
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ServiceCenterDetailsPage(
+                          name: serviceCenters[index],
+                          location: '', // Pass location if needed
+                          imageUrl: '', // Pass image URL if needed
+                          rating: 0.0, // Pass rating if needed
+                          services: [], // Pass services if needed
+                        ),
+                      ),
+                    );
+                  },
+                  child: ServiceCenterLinkCard(serviceCenterName: serviceCenters[index]),
+                );
               },
             )
           : Center(
