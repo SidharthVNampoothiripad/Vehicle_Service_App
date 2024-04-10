@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'location_calc/loc_calc.dart'; // Import LocationCalculation class
+import 'location_calc/loc_eqn.dart'; // Import LocationCalculation class
 
 // Import other necessary files
 import 'service_center_card.dart';
@@ -16,7 +16,7 @@ class CarServiceHomePage extends StatefulWidget {
 }
 
 class _CarServiceHomePageState extends State<CarServiceHomePage> {
-  late Future<QuerySnapshot<Map<String, dynamic>>> _serviceCentres;
+  late Future<List<DocumentSnapshot>> _serviceCentres;
   List<String> imagePaths = [
     'assets/img1.png',
     'assets/img2.png',
@@ -30,23 +30,24 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
 
   double? userLat;
   double? userLong;
-  
+
   @override
   void initState() {
     super.initState();
     _getLocationAndStore(); // Call the method to get location and store it
-    _serviceCentres =
-        FirebaseFirestore.instance.collection('Service_Centres').get();
+    _serviceCentres = _fetchSortedServiceCenters();
   }
 
   // Method to get the user's location and store it in Firestore
   _getLocationAndStore() async {
     try {
-      Position? position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      if (position != null) {
+      LocationPermission permission = await Geolocator.requestPermission();
+  
+      if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+        // Permissions granted, proceed to get the location
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
         setState(() {
           userLat = position.latitude;
           userLong = position.longitude;
@@ -57,19 +58,49 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
         if (email != null) {
           // Store latitude and longitude in Firestore under Users collection with the document ID as the email
           await FirebaseFirestore.instance.collection('Users').doc(email).update({
-            'locValue': {
               'latitude': userLat,
               'longitude': userLong,
-            },
           });
         } else {
           print('Error getting user email: User is not logged in');
         }
       } else {
-        print('Error getting location: Position is null');
+        // Permissions not granted, handle accordingly (show a message, ask again, etc.)
+        print('Location permission denied.');
       }
     } catch (e) {
       print('Error getting location: $e');
+    }
+  }
+
+  // Method to fetch service centers sorted by distance
+  Future<List<DocumentSnapshot>> _fetchSortedServiceCenters() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('Service_Centres').get();
+
+      // Calculate distances and sort by them
+      List<DocumentSnapshot> serviceCentres = snapshot.docs;
+      serviceCentres.sort((a, b) {
+        double distanceToA = LocationCalculator.calculateDistance(
+          userLat!,
+          userLong!,
+          a['locValue']['latitude'],
+          a['locValue']['longitude'],
+        );
+        double distanceToB = LocationCalculator.calculateDistance(
+          userLat!,
+          userLong!,
+          b['locValue']['latitude'],
+          b['locValue']['longitude'],
+        );
+        return distanceToA.compareTo(distanceToB);
+      });
+
+      return serviceCentres;
+    } catch (e) {
+      print('Error fetching and sorting service centers: $e');
+      return [];
     }
   }
 
@@ -147,19 +178,18 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
       ),
       body: Container(
         color: Color.fromARGB(255, 207, 173, 210),
-        child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        child: FutureBuilder<List<DocumentSnapshot>>(
           future: _serviceCentres,
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
-
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             }
 
-            List<QueryDocumentSnapshot<Map<String, dynamic>>> serviceCentres =
-                snapshot.data!.docs;
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            List<DocumentSnapshot> serviceCentres = snapshot.data!;
 
             return ListView(
               children: <Widget>[
@@ -172,17 +202,22 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                 ),
-                // Use the sorted service centers obtained from LocationCalculation class
+                // Display sorted service centers
                 for (var serviceCenter in serviceCentres)
                   ServiceCenterCard(
                     name: serviceCenter['Service Center Name'],
                     location: serviceCenter['Location'],
                     phoneNumber: serviceCenter['Phone Number'],
-                    //distance: serviceCenter['distance'],
                     imagePath: imagePaths[
                         imageIndex++ % imagePaths.length], // Get the image path based on the current index
                     services: List<String>.from(
                         serviceCenter['Services_offered']),
+                    distance: LocationCalculator.calculateDistance(
+                      userLat!,
+                      userLong!,
+                      serviceCenter['locValue']['latitude'],
+                      serviceCenter['locValue']['longitude'],
+                    ),
                   ),
               ],
             );

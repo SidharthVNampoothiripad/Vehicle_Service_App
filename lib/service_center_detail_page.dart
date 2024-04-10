@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+
 class ServiceCenterDetailsPage extends StatefulWidget {
   final String name;
   final String location;
   final String imagePath;
   final String phoneNumber;
+  final double distance;
   final List<String> services;
 
-   ServiceCenterDetailsPage({
+  ServiceCenterDetailsPage({
     required this.name,
     required this.location,
     required this.imagePath,
     required this.phoneNumber,
+    required this.distance,
     required this.services,
   });
 
@@ -89,7 +92,7 @@ class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
                           children: [
                             SizedBox(height: 8.0),
                             Text(
-                              '\u{1F4CD} ${widget.location} | \u{1F4DE} ${widget.phoneNumber}',
+                                '\u{1F4CD} ${widget.location} | \u{1F4DE} ${widget.phoneNumber} | ${widget.distance.toStringAsFixed(2)} km',
                               style: TextStyle(
                                 fontSize: 16.0,
                               ),
@@ -122,8 +125,8 @@ class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
                       ),
                       SizedBox(height: 16.0),
                       ElevatedButton(
-                        onPressed: () 
-                        {  
+                        onPressed: () {
+                          // Add logic for order button
                         },
                         child: Text('Order'),
                       ),
