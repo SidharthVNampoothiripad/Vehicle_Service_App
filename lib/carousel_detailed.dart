@@ -30,19 +30,7 @@ class CarouselDetailed extends StatelessWidget {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    // Navigate to the ServiceCenterDetailsPage
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ServiceCenterDetailsPage(
-                          name: serviceCenters[index],
-                          location: '', // Pass location if needed
-                          imageUrl: '', // Pass image URL if needed
-                          rating: 0.0, // Pass rating if needed
-                          services: [], // Pass services if needed
-                        ),
-                      ),
-                    );
+                  
                   },
                   child: ServiceCenterLinkCard(serviceCenterName: serviceCenters[index]),
                 );

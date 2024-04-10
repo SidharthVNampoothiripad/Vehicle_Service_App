@@ -1,21 +1,23 @@
-// service_center_card.dart
 import 'package:flutter/material.dart';
 import 'service_center_detail_page.dart';
 
 class ServiceCenterCard extends StatelessWidget {
   final String name;
+  final String phoneNumber;
   final String location;
-  final String imageUrl;
-  final double rating;
   final List<String> services;
-
+  final String imagePath;
+  //final double distance;
   ServiceCenterCard({
     required this.name,
-    required this.imageUrl,
+    required this.phoneNumber,
     required this.location,
-    required this.rating,
     required this.services,
+    required this.imagePath,
+    //required this.distance, // Initialize distance parameter
   });
+
+  get rating => 0;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +29,10 @@ class ServiceCenterCard extends StatelessWidget {
             builder: (context) => ServiceCenterDetailsPage(
               name: name,
               location: location,
-              imageUrl: imageUrl,
-              rating: rating,
               services: services,
+              phoneNumber: phoneNumber,
+              imagePath: imagePath,
+               //distance: distance, // Pass distance to the details page
             ),
           ),
         );
@@ -37,6 +40,9 @@ class ServiceCenterCard extends StatelessWidget {
       child: Card(
         elevation: 5.0,
         margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -45,11 +51,11 @@ class ServiceCenterCard extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8.0),
-                    topRight: Radius.circular(8.0),
+                    topLeft: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0),
                   ),
-                  child: Image.network(
-                    imageUrl,
+                  child: Image.asset(
+                    imagePath,
                     width: double.infinity,
                     height: 150.0,
                     fit: BoxFit.cover,
@@ -115,6 +121,10 @@ class ServiceCenterCard extends StatelessWidget {
                     services.join(', '), // Display services as a comma-separated string
                     style: TextStyle(fontSize: 14.0),
                   ),
+                  /*Text(
+              'Distance: ${distance.toStringAsFixed(2)} km', // Display distance
+              style: TextStyle(fontSize: 10.0),
+            ),*/
                 ],
               ),
             ),

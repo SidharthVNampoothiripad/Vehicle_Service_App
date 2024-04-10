@@ -1,7 +1,12 @@
-// car_service_home_page.dart
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'location_calc/loc_calc.dart'; // Import LocationCalculation class
+
+// Import other necessary files
 import 'service_center_card.dart';
-import 'search_page.dart'; 
+import 'search_page.dart';
 import 'carousel.dart';
 import 'user_details.dart';
 
@@ -11,6 +16,63 @@ class CarServiceHomePage extends StatefulWidget {
 }
 
 class _CarServiceHomePageState extends State<CarServiceHomePage> {
+  late Future<QuerySnapshot<Map<String, dynamic>>> _serviceCentres;
+  List<String> imagePaths = [
+    'assets/img1.png',
+    'assets/img2.png',
+    'assets/img3.png',
+    'assets/img4.png',
+    'assets/img5.png',
+    'assets/img6.png',
+    'assets/img7.png',
+  ];
+  int imageIndex = 0;
+
+  double? userLat;
+  double? userLong;
+  
+  @override
+  void initState() {
+    super.initState();
+    _getLocationAndStore(); // Call the method to get location and store it
+    _serviceCentres =
+        FirebaseFirestore.instance.collection('Service_Centres').get();
+  }
+
+  // Method to get the user's location and store it in Firestore
+  _getLocationAndStore() async {
+    try {
+      Position? position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      if (position != null) {
+        setState(() {
+          userLat = position.latitude;
+          userLong = position.longitude;
+        });
+        
+        // Get the current user's email
+        String? email = FirebaseAuth.instance.currentUser?.email;
+        if (email != null) {
+          // Store latitude and longitude in Firestore under Users collection with the document ID as the email
+          await FirebaseFirestore.instance.collection('Users').doc(email).update({
+            'locValue': {
+              'latitude': userLat,
+              'longitude': userLong,
+            },
+          });
+        } else {
+          print('Error getting user email: User is not logged in');
+        }
+      } else {
+        print('Error getting location: Position is null');
+      }
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,36 +100,35 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => UserInfo()),
+                MaterialPageRoute(builder: (context) => UserProfile()),
               );
             },
           ),
         ],
       ),
-    drawer: Drawer(
-  child: ListView(
-    padding: EdgeInsets.zero,
-    children: <Widget>[
-      SizedBox(
-        height: 60, // Adjust the height of the DrawerHeader
-        child: DrawerHeader(
-           padding: EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Color.fromARGB(255, 116, 47, 129),
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-              child: Text(
-                'FixFlow',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18, // Adjust the font size as needed
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            SizedBox(
+              height: 60, // Adjust the height of the DrawerHeader
+              child: DrawerHeader(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 116, 47, 129),
                 ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'FixFlow',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18, // Adjust the font size as needed
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-
             ListTile(
               title: Text('My Orders'),
               onTap: () {
@@ -86,56 +147,48 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
       ),
       body: Container(
         color: Color.fromARGB(255, 207, 173, 210),
-        child: ListView(
-        children: <Widget>[
-          CustomCarousel(),
-          
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Service Centers Near You',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-            ),
-          ),
-          ServiceCenterCard(
-            name: 'Service Center A',
-            location: 'Chengannur',
-            imageUrl: 'https://plus.unsplash.com/premium_photo-1677009541899-28700f6c20a8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FyJTIwd29ya3Nob3B8ZW58MHx8MHx8fDA%3D',
-            rating: 4.5,
-            services: ['Wheel alignment', 'Tire Rotation','Nitrogen filling'],
-          ),
-          ServiceCenterCard(
-            name: 'Service Center B',
-            location: 'Thiruvalla',
-            imageUrl: 'https://plus.unsplash.com/premium_photo-1676998430827-aee8e597b013?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGNhciUyMHdvcmtzaG9wfGVufDB8fDB8fHww',
-            rating: 4.2,
-            services: ['Oil change', 'Engine Tune-up','Gear box and Clutch maintenance'],
-          ),
-          ServiceCenterCard(
-            name: 'Service Center C',
-            location: 'Changanassery',
-            imageUrl: 'https://plus.unsplash.com/premium_photo-1663045610933-af6f1ca26c6e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGNhciUyMHdvcmtzaG9wfGVufDB8fDB8fHww',
-            rating: 4.2,
-            services: ['Dent and scratch repair', 'Washing','Graphite coating'],
-          ),
-          ServiceCenterCard(
-            name: 'Service Center D',
-            location: 'Pandalam',
-            imageUrl: 'https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2FyJTIwd29ya3Nob3B8ZW58MHx8MHx8fDA%3D',
-            rating: 4.0,
-            services: ['Brake Inspection', 'Engine Tune-Up','Chassis'],
-          ),
-          ServiceCenterCard(
-            name: 'Service Center E',
-            location: 'Adoor',
-            imageUrl: 'https://plus.unsplash.com/premium_photo-1675810094948-d4634e766d2b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2FyJTIwc2VydmljZXxlbnwwfHwwfHx8MA%3D%3D',
-            rating: 3.9,
-            services: ['Car detailing','Glasses','Washing'],
-          ),
-          // Add more ServiceCenterCard widgets for other service centers
-        ],
+        child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          future: _serviceCentres,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            List<QueryDocumentSnapshot<Map<String, dynamic>>> serviceCentres =
+                snapshot.data!.docs;
+
+            return ListView(
+              children: <Widget>[
+                CustomCarousel(),
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Service Centers Near You',
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                // Use the sorted service centers obtained from LocationCalculation class
+                for (var serviceCenter in serviceCentres)
+                  ServiceCenterCard(
+                    name: serviceCenter['Service Center Name'],
+                    location: serviceCenter['Location'],
+                    phoneNumber: serviceCenter['Phone Number'],
+                    //distance: serviceCenter['distance'],
+                    imagePath: imagePaths[
+                        imageIndex++ % imagePaths.length], // Get the image path based on the current index
+                    services: List<String>.from(
+                        serviceCenter['Services_offered']),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
-      )
     );
   }
 }
