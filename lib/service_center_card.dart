@@ -7,7 +7,7 @@ class ServiceCenterCard extends StatelessWidget {
   final String location;
   final List<String> services;
   final String imagePath;
-  final double distance;
+  final double? distance; // Change the type to double?
 
   ServiceCenterCard({
     required this.name,
@@ -15,7 +15,7 @@ class ServiceCenterCard extends StatelessWidget {
     required this.location,
     required this.services,
     required this.imagePath,
-    required this.distance,
+    this.distance, // Update the type to double?
   });
 
   get rating => 0;
@@ -33,7 +33,7 @@ class ServiceCenterCard extends StatelessWidget {
               services: services,
               phoneNumber: phoneNumber,
               imagePath: imagePath,
-              distance: distance,
+              distance: distance ?? 0, // Use null-aware operator to handle nullable distance
             ),
           ),
         );
@@ -116,13 +116,22 @@ class ServiceCenterCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        '${distance.toStringAsFixed(2)} km',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
+                      if (distance != null) // Check if distance is not null
+                        Text(
+                          '${distance?.toStringAsFixed(2)} km',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      else // Display loading indicator or placeholder text
+                        Text(
+                          'Calculating distance...',
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ],
