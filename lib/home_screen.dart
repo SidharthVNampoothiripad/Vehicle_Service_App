@@ -160,49 +160,56 @@ void initState() {
           ],
         ),
       ),
-      body: Container(
-        color: Color.fromARGB(255, 207, 173, 210),
-        child: FutureBuilder<List<DocumentSnapshot>>(
-          future: _serviceCentres,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
+    body: Container(
+      color: Color.fromARGB(255, 207, 173, 210),
+      child: FutureBuilder<List<DocumentSnapshot>>(
+        future: _serviceCentres,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-            List<DocumentSnapshot> serviceCentres = snapshot.data!;
+          List<DocumentSnapshot> serviceCentres = snapshot.data!;
 
-            return ListView(
-              children: <Widget>[
-                CustomCarousel(),
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Service Centers Near You',
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                  ),
+          // Sort service centers based on distance
+          serviceCentres.sort((a, b) {
+            double distanceA = a['distance'] ?? double.infinity;
+            double distanceB = b['distance'] ?? double.infinity;
+            return distanceA.compareTo(distanceB);
+          });
+
+          return ListView(
+            children: <Widget>[
+              CustomCarousel(),
+              Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Service Centers Near You',
+                  style:
+                      TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
-                // Display sorted service centers
-                for (var serviceCenter in serviceCentres)
-                  ServiceCenterCard(
-                    name: serviceCenter['Service Center Name'],
-                    location: serviceCenter['Location'],
-                    phoneNumber: serviceCenter['Phone Number'],
-                    imagePath: imagePaths[
-                        imageIndex++ % imagePaths.length], // Get the image path based on the current index
-                    services: List<String>.from(
-                        serviceCenter['Services_offered']),
-                    distance: serviceCenter['distance'] ?? 0.0, // Use the stored distance
-                  ),
-              ],
-            );
-          },
-        ),
+              ),
+              // Display sorted service centers
+              for (var serviceCenter in serviceCentres)
+                ServiceCenterCard(
+                  name: serviceCenter['Service Center Name'],
+                  location: serviceCenter['Location'],
+                  phoneNumber: serviceCenter['Phone Number'],
+                  imagePath: imagePaths[
+                      imageIndex++ % imagePaths.length], // Get the image path based on the current index
+                  services: List<String>.from(
+                      serviceCenter['Services_offered']),
+                  distance: serviceCenter['distance'] ?? 0.0, // Use the stored distance
+                ),
+            ],
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+}
 }
