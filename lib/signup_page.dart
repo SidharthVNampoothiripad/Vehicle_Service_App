@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:geolocator/geolocator.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -18,9 +18,29 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _locationController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  double? userLat;
+  double? userLong;
+
   @override
   void initState() {
-    super.initState(); // Call _getLocation() method when the widget is initialized
+    super.initState();
+    _getLocationAndStore(); // Call _getLocation() method when the widget is initialized
+  }
+
+  // Method to get the user's location and store it in Firestore
+  _getLocationAndStore() async {
+    LocationPermission permission = await Geolocator.requestPermission();
+
+    if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+      // Permissions granted, proceed to get the location
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        userLat = position.latitude;
+        userLong = position.longitude;
+      });
+    }
   }
 
   @override
@@ -168,20 +188,18 @@ class _SignupPageState extends State<SignupPage> {
                     if (_formKey.currentState!.validate()) {
                       try {
                         // Sign up user with email and password
-                        UserCredential userCredential = await _auth
-                            .createUserWithEmailAndPassword(
+                        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
                           email: _emailController.text,
                           password: _passwordController.text,
                         );
 
-                        await FirebaseFirestore.instance
-                            .collection('Users')
-                            .doc(_emailController.text)
-                            .set({
+                        await FirebaseFirestore.instance.collection('Users').doc(_emailController.text).set({
                           'Name': _nameController.text,
                           'Email': _emailController.text,
                           'Phone Number': _phoneNumberController.text,
                           'Location': _locationController.text,
+                          'Latitude': userLat,
+                          'Longitude': userLong,
                         });
 
                         // Handle successful signup

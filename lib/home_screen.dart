@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'location_calc/loc_eqn.dart'; // Import LocationCalculation class
+import 'package:hellogram/loc_calc.dart';
 
 // Import other necessary files
 import 'service_center_card.dart';
 import 'search_page.dart';
 import 'carousel.dart';
 import 'user_details.dart';
+
 
 class CarServiceHomePage extends StatefulWidget {
   @override
@@ -32,17 +33,28 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
   double? userLong;
 
   @override
-  void initState() {
-    super.initState();
-    _getLocationAndStore(); // Call the method to get location and store it
-    _serviceCentres = _fetchSortedServiceCenters();
+void initState() {
+  super.initState();
+  _serviceCentres = _fetchServiceCentres(); // Initialize _serviceCentres with the future
+  _getLocationAndStore(); // Call the method to get location and store it
+}
+    Future<List<DocumentSnapshot>> _fetchServiceCentres() async {
+  try {
+    // Fetch the list of service centers from Firestore
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('Service_Centres').get();
+    List<DocumentSnapshot> serviceCentres = querySnapshot.docs;
+    return serviceCentres;
+  } catch (e) {
+    print('Error fetching service centers: $e');
+    return []; // Return an empty list in case of error
   }
+}
 
   // Method to get the user's location and store it in Firestore
   _getLocationAndStore() async {
     try {
       LocationPermission permission = await Geolocator.requestPermission();
-  
+
       if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
         // Permissions granted, proceed to get the location
         Position position = await Geolocator.getCurrentPosition(
@@ -64,43 +76,15 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
         } else {
           print('Error getting user email: User is not logged in');
         }
+        
+        // Call the method to calculate and store distances
+        await LocationCalculation().calculateAndStoreDistance();
       } else {
         // Permissions not granted, handle accordingly (show a message, ask again, etc.)
         print('Location permission denied.');
       }
     } catch (e) {
       print('Error getting location: $e');
-    }
-  }
-
-  // Method to fetch service centers sorted by distance
-  Future<List<DocumentSnapshot>> _fetchSortedServiceCenters() async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> snapshot =
-          await FirebaseFirestore.instance.collection('Service_Centres').get();
-
-      // Calculate distances and sort by them
-      List<DocumentSnapshot> serviceCentres = snapshot.docs;
-      serviceCentres.sort((a, b) {
-        double distanceToA = LocationCalculator.calculateDistance(
-          userLat!,
-          userLong!,
-          a['locValue']['latitude'],
-          a['locValue']['longitude'],
-        );
-        double distanceToB = LocationCalculator.calculateDistance(
-          userLat!,
-          userLong!,
-          b['locValue']['latitude'],
-          b['locValue']['longitude'],
-        );
-        return distanceToA.compareTo(distanceToB);
-      });
-
-      return serviceCentres;
-    } catch (e) {
-      print('Error fetching and sorting service centers: $e');
-      return [];
     }
   }
 
@@ -212,12 +196,7 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
                         imageIndex++ % imagePaths.length], // Get the image path based on the current index
                     services: List<String>.from(
                         serviceCenter['Services_offered']),
-                    distance: LocationCalculator.calculateDistance(
-                      userLat!,
-                      userLong!,
-                      serviceCenter['locValue']['latitude'],
-                      serviceCenter['locValue']['longitude'],
-                    ),
+                    distance: serviceCenter['distance'] ?? 0.0, // Use the stored distance
                   ),
               ],
             );

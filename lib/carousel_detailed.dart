@@ -1,44 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:hellogram/service_center_detail_page.dart';
-import 'service_centre_link_card.dart'; // Import the new file // Import the service center details page
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'service_center_card.dart';
 
 class CarouselDetailed extends StatelessWidget {
   final String selectedService;
 
   CarouselDetailed({required this.selectedService});
-
-  // Manual data for service centers related to the selected service
-  Map<String, List<String>> serviceCentersData = {
-    'Car Wash': ['Service Center C', 'Service Center E'],
-    'Engine': ['Service Center B', 'Service Center D'], // Added 'Service Center F' for Engine Tune-up
-    'Tyre ': ['Service Center A'], // Added 'Service Center G' for Tyre Services
-    'Chassis': ['Service Center D'],
-  };
-
+List<String> imagePaths = [
+    'assets/img1.png',
+    'assets/img2.png',
+    'assets/img3.png',
+    'assets/img4.png',
+    'assets/img5.png',
+    'assets/img6.png',
+    'assets/img7.png',
+  ];
+  int imageIndex = 0;
   @override
   Widget build(BuildContext context) {
-    // Get the service centers for the selected service
-    List<String>? serviceCenters = serviceCentersData[selectedService];
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Service Centers for $selectedService'),
+        title: Text(selectedService),
       ),
-      body: serviceCenters != null && serviceCenters.isNotEmpty
-          ? ListView.builder(
-              itemCount: serviceCenters.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                  
-                  },
-                  child: ServiceCenterLinkCard(serviceCenterName: serviceCenters[index]),
-                );
-              },
-            )
-          : Center(
-              child: Text('No service centers found for $selectedService'),
-            ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('Service_Centres')
+            .where('Services_offered', arrayContains: selectedService)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final serviceCenters = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: serviceCenters.length,
+            itemBuilder: (context, index) {
+              final centerData = serviceCenters[index].data() as Map<String, dynamic>;
+              return ServiceCenterCard(
+                name: centerData['Service Center Name'],
+                phoneNumber: centerData['Phone Number'],
+                location: centerData['Location'],
+                services: List<String>.from(centerData['Services_offered']),
+               imagePath: imagePaths[
+                        imageIndex++ % imagePaths.length], // Get the image path based on the current index
+                distance: centerData['distance'] != null ? centerData['distance'].toDouble() : 0.0,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
