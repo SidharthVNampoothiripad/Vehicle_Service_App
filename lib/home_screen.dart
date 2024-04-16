@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hellogram/loc_calc.dart';
+import 'package:hellogram/my_orders_page.dart';
+
 
 // Import other necessary files
 import 'service_center_card.dart';
@@ -126,7 +128,7 @@ void initState() {
           padding: EdgeInsets.zero,
           children: <Widget>[
             SizedBox(
-              height: 60, // Adjust the height of the DrawerHeader
+              height: 80, // Adjust the height of the DrawerHeader
               child: DrawerHeader(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
@@ -147,7 +149,10 @@ void initState() {
             ListTile(
               title: Text('My Orders'),
               onTap: () {
-                // Add navigation logic here
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyOrdersPage()),
+                  );
               },
             ),
             ListTile(
@@ -196,15 +201,17 @@ void initState() {
               // Display sorted service centers
               for (var serviceCenter in serviceCentres)
                 ServiceCenterCard(
-                  name: serviceCenter['Service Center Name'],
-                  location: serviceCenter['Location'],
-                  phoneNumber: serviceCenter['Phone Number'],
-                  imagePath: imagePaths[
-                      imageIndex++ % imagePaths.length], // Get the image path based on the current index
-                  services: List<String>.from(
-                      serviceCenter['Services_offered']),
-                  distance: serviceCenter['distance'] ?? 0.0, // Use the stored distance
-                ),
+  name: serviceCenter['Service Center Name'],
+  location: serviceCenter['Location'],
+  phoneNumber: serviceCenter['Phone Number'],
+  imagePath: imagePaths[
+      imageIndex++ % imagePaths.length], // Get the image path based on the current index
+  services: List<String>.from(
+      serviceCenter['Services_offered']),
+  distance: serviceCenter['distance'] ?? 0.0, // Use the stored distance
+  email:serviceCenter['Email'],
+  serviceAmounts: Map<String, int>.from(serviceCenter['Service_Amounts']), // Pass service amounts
+),
             ],
           );
         },

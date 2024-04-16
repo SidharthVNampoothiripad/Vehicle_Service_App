@@ -219,11 +219,7 @@ class _SignupPageState extends State<SignupPage> {
                       } catch (e) {
                         // Handle signup errors
                         print('Failed to sign up: $e');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Email already used.'),
-                          ),
-                        );
+                  
                       }
                     }
                   },

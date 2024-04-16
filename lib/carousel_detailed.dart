@@ -45,11 +45,13 @@ List<String> imagePaths = [
               return ServiceCenterCard(
                 name: centerData['Service Center Name'],
                 phoneNumber: centerData['Phone Number'],
+                email:centerData['Email'],
                 location: centerData['Location'],
                 services: List<String>.from(centerData['Services_offered']),
                imagePath: imagePaths[
                         imageIndex++ % imagePaths.length], // Get the image path based on the current index
                 distance: centerData['distance'] != null ? centerData['distance'].toDouble() : 0.0,
+                serviceAmounts: Map<String, int>.from(centerData['Service_Amounts']),
               );
             },
           );

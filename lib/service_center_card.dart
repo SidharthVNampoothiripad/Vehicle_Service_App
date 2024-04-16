@@ -1,16 +1,15 @@
-// service_center_card.dart
 
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'service_center_detail_page.dart';
 
-class ServiceCenterCard extends StatelessWidget {
+ import 'package:flutter/material.dart';
+import 'service_center_detail_page.dart';class ServiceCenterCard extends StatelessWidget {
   final String name;
   final String phoneNumber;
   final String location;
   final List<String> services;
   final String imagePath;
-  final double? distance;
+  final double distance;
+  final String email;
+  final Map<String, int> serviceAmounts;
 
   ServiceCenterCard({
     required this.name,
@@ -18,8 +17,12 @@ class ServiceCenterCard extends StatelessWidget {
     required this.location,
     required this.services,
     required this.imagePath,
-    this.distance,
+    required this.distance,
+    required this.serviceAmounts,
+    required this.email // Add service amounts parameter
   });
+
+  get rating => 0;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,9 @@ class ServiceCenterCard extends StatelessWidget {
               services: services,
               phoneNumber: phoneNumber,
               imagePath: imagePath,
-              distance: distance ?? 0,
+              distance: distance,
+              serviceAmounts: serviceAmounts,
+              email:email // Pass service amounts to the details page
             ),
           ),
         );
@@ -61,6 +66,30 @@ class ServiceCenterCard extends StatelessWidget {
                     width: double.infinity,
                     height: 150.0,
                     fit: BoxFit.cover,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(6.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: Colors.green,
+                      ),
+                      SizedBox(width: 4.0),
+                      Text(
+                        rating.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -93,22 +122,13 @@ class ServiceCenterCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      if (distance != null)
-                        Text(
-                          '${distance?.toStringAsFixed(2)} km',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      else
-                        Text(
-                          'Calculating distance...',
-                          style: TextStyle(
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      Text(
+                        '${distance.toStringAsFixed(2)} km',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
                     ],
                   ),
                 ],

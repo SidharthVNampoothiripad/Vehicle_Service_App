@@ -13,8 +13,6 @@ class LocationCalculation {
         return;  // Early exit if user is not logged in
       }
 
-      print('User email: $email');
-
       // Get a reference to the user's document in Firestore
       DocumentReference userRef = FirebaseFirestore.instance.collection('Users').doc(email);
 
@@ -26,8 +24,6 @@ class LocationCalculation {
         if (userSnapshot.exists) {
           double userLatitude = userSnapshot['latitude'];
           double userLongitude = userSnapshot['longitude'];
-
-          print('User latitude: $userLatitude, longitude: $userLongitude');
 
           // Get a reference to the 'Service_Centres' collection
           CollectionReference serviceCentersCollection = FirebaseFirestore.instance.collection('Service_Centres');
@@ -44,7 +40,6 @@ class LocationCalculation {
     double centerLat = doc['locValue']['latitude'];
     double centerLong = doc['locValue']['longitude'];
 
-    print('Service center ${doc.id} latitude: $centerLat, longitude: $centerLong');
 
     // Calculate distance between user and service center using the Haversine formula (in meters)
     double distanceInMeters = Geolocator.distanceBetween(userLatitude, userLongitude, centerLat, centerLong);
@@ -57,7 +52,6 @@ class LocationCalculation {
 
     // Update the existing document with the formatted distance
     await doc.reference.update({'distance': double.parse(formattedDistance)});
-    print('Distance to ${doc.id}: $formattedDistance km (updated successfully)');
   } catch (e) {
     print('Error updating distance for ${doc.id}: $e');
   }
