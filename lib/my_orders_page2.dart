@@ -1,9 +1,8 @@
   import 'package:firebase_auth/firebase_auth.dart';
   import 'package:flutter/material.dart';
   import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hellogram/my_orders_page2.dart';
 
-  class MyOrdersPage extends StatelessWidget {
+  class MyOrdersPage1 extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -44,33 +43,31 @@ import 'package:hellogram/my_orders_page2.dart';
         itemBuilder: (context, index) {
           final orderData = orders[index].data() as Map<String, dynamic>;
 
-         // Accessing order details
+          // Accessing order details
           String userEmail = orders[index].id; // Using document ID as user email
-          String Ordered_date = orderData['orderedDate'];
-          String Ordered_time = orderData['orderedTime'];
-          String totalAmount = orderData['totalAmount'].toString(); // Ensure it's converted to String
-          List<dynamic> selectedServicesList = orderData['selectedServices'];
-          String selectedServices = selectedServicesList.join(', ');
+          String date = orderData['date'];
+          String time = orderData['time'];
+          String workerName = orderData['workerName'];
+          String message = orderData['message'];
 
           return ListTile(
-            title: Text('Order ${index + 1}',style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Ordered Date: $Ordered_date',
+                  'Expected Date: $date',
                   style: TextStyle(fontSize: 16),
                 ),
                  Text(
-                  'Ordered Time: $Ordered_time',
+                  'Expected Time: $time',
                   style: TextStyle(fontSize: 16),
                 ),
                 Text(
-                  'totalAmount: $totalAmount',
+                  'Worker Name: $workerName',
                   style: TextStyle(fontSize: 16),
                 ),
                 Text(
-                  'selectedServices: $selectedServices',
+                  'Message: $message',
                   style: TextStyle(fontSize: 16),
                 ),
                 Text(
@@ -80,10 +77,7 @@ import 'package:hellogram/my_orders_page2.dart';
               ],
             ),
             onTap: () {
-               Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyOrdersPage1()),
-                  );
+              // Handle onTap event if needed
             },
           );
         },

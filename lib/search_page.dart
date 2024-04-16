@@ -29,8 +29,8 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Services or Centres'),
-        backgroundColor: Color.fromARGB(255, 249, 170, 249).withOpacity(0.5),
+        title: Text('Search Service Centers'),
+       backgroundColor: Color.fromARGB(255, 250, 223, 255),
         actions: [
           PopupMenuButton<SortBy>(
             onSelected: (SortBy result) {
@@ -58,7 +58,7 @@ class _SearchPageState extends State<SearchPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search Services or Centres',
+                hintText: 'Search Service Centers',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -85,10 +85,13 @@ class _SearchPageState extends State<SearchPage> {
                   return Center(child: CircularProgressIndicator());
                 }
 
-                final serviceCenters = snapshot.data!.docs.where((doc) {
-                  final List<dynamic> services = doc['Services_offered'] ?? [];
-                  return services.any((service) => service.toString().toLowerCase().contains(_searchQuery));
-                });
+               final serviceCenters = snapshot.data!.docs.where((doc) {
+  final name = doc['Service Center Name'].toString().toLowerCase();
+  final List<dynamic> services = doc['Services_offered'] ?? [];
+
+  return name.contains(_searchQuery) ||
+      services.any((service) => service.toString().toLowerCase().contains(_searchQuery));
+});
 
                 if (serviceCenters.isEmpty) {
                   return Center(child: Text('No service centers found.'));

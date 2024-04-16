@@ -20,8 +20,10 @@ List<String> imagePaths = [
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 250, 223, 255),
         title: Text(selectedService),
       ),
+      
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Service_Centres')
