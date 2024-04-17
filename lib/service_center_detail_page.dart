@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hellogram/upi_payment.dart';
+import 'package:intl/intl.dart';
 
 class ServiceCenterDetailsPage extends StatefulWidget {
   final String name;
@@ -54,6 +55,16 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
 
       // Add a subcollection with the user's email as its ID
       CollectionReference ordersCollection = serviceCenterRef.collection('orders');
+
+      // Get current timestamp
+      Timestamp currentTimeStamp = Timestamp.now();
+
+      // Format the ordered date
+      String orderedDate = DateFormat.yMMMMd().format(currentTimeStamp.toDate());
+
+      // Format the ordered time
+      String orderedTime = DateFormat.jm().format(currentTimeStamp.toDate());
+
       await ordersCollection.doc(userEmail).set({
         'userEmail': userEmail,
         'userName': userName,
@@ -62,9 +73,23 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
         'serviceCenterName': serviceCenterName,
         'selectedServices': selectedServices,
         'totalAmount': totalAmount,
-        'createdAt': FieldValue.serverTimestamp(), // Optional, adds a timestamp
+        'orderedDate': orderedDate,
+        'orderedTime': orderedTime,
       });
       print('Order placed successfully');
+
+      // Creating another collection 'orders_placed2' with current user's email as ID
+      DocumentReference userOrdersRef = FirebaseFirestore.instance.collection('orders_placed2').doc(userEmail);
+      CollectionReference userOrdersCollection = userOrdersRef.collection('orders');
+      await userOrdersCollection.doc(widget.email).set({
+        'serviceCenterName': serviceCenterName,
+        'selectedServices': selectedServices,
+        'totalAmount': totalAmount,
+        'orderedDate': orderedDate,
+        'orderedTime': orderedTime,
+      });
+      print('Order placed in orders_placed2 successfully');
+      print(widget.email);
     } else {
       print('User details not found');
     }
@@ -72,6 +97,7 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
     print('Error placing order: $e');
   }
 }
+
 
   @override
   Widget build(BuildContext context) {
