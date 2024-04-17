@@ -240,7 +240,17 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
                   MaterialPageRoute(builder: (context) => UpiPaymentPage()),
                 );
                         },
-                        child: Text('Order'),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 17, horizontal: 25),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                           backgroundColor: const Color.fromRGBO(156, 39, 176, 1),
+                        ),
+                        child: Text(
+                          'Order',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
