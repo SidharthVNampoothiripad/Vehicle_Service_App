@@ -138,7 +138,7 @@ class _SearchPageState extends State<SearchPage> {
                         distance: serviceCenter['distance'] != null ? serviceCenter['distance'].toDouble() : 0.0,
                         serviceAmounts: Map<String, int>.from(serviceCenter['Service_Amounts']),
                         email: serviceCenter['Email'],
-                        rating: serviceCenter['rating'] ?? 0.0
+                        rating: (serviceCenter['rate'] ?? 0.0).toDouble(),
 
                       ),
                     );
