@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'service_center_card.dart';
 import 'service_center_detail_page.dart';
 
-enum SortBy { Name, Distance }
+enum SortBy { Name, Distance, Rating }
 
 class SearchPage extends StatefulWidget {
   @override
@@ -30,7 +30,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Search Service Centers'),
-       backgroundColor: Color.fromARGB(255, 250, 223, 255),
+        backgroundColor: Color.fromARGB(255, 250, 223, 255),
         actions: [
           PopupMenuButton<SortBy>(
             onSelected: (SortBy result) {
@@ -46,6 +46,10 @@ class _SearchPageState extends State<SearchPage> {
               const PopupMenuItem<SortBy>(
                 value: SortBy.Distance,
                 child: Text('Sort by Distance'),
+              ),
+              const PopupMenuItem<SortBy>(
+                value: SortBy.Rating,
+                child: Text('Sort by Rating'),
               ),
             ],
           ),
@@ -85,13 +89,13 @@ class _SearchPageState extends State<SearchPage> {
                   return Center(child: CircularProgressIndicator());
                 }
 
-               final serviceCenters = snapshot.data!.docs.where((doc) {
-  final name = doc['Service Center Name'].toString().toLowerCase();
-  final List<dynamic> services = doc['Services_offered'] ?? [];
+                final serviceCenters = snapshot.data!.docs.where((doc) {
+                  final name = doc['Service Center Name'].toString().toLowerCase();
+                  final List<dynamic> services = doc['Services_offered'] ?? [];
 
-  return name.contains(_searchQuery) ||
-      services.any((service) => service.toString().toLowerCase().contains(_searchQuery));
-});
+                  return name.contains(_searchQuery) ||
+                      services.any((service) => service.toString().toLowerCase().contains(_searchQuery));
+                });
 
                 if (serviceCenters.isEmpty) {
                   return Center(child: Text('No service centers found.'));
@@ -104,6 +108,12 @@ class _SearchPageState extends State<SearchPage> {
                     final distanceA = a['distance'] ?? double.infinity;
                     final distanceB = b['distance'] ?? double.infinity;
                     return distanceA.compareTo(distanceB);
+                  });
+                } else if (_sortBy == SortBy.Rating) {
+                  sortedServiceCenters.sort((a, b) {
+                    final ratingA = a['rate'] ?? 0.0;
+                    final ratingB = b['rate'] ?? 0.0;
+                    return ratingB.compareTo(ratingA); // Descending order
                   });
                 }
 
@@ -138,8 +148,7 @@ class _SearchPageState extends State<SearchPage> {
                         distance: serviceCenter['distance'] != null ? serviceCenter['distance'].toDouble() : 0.0,
                         serviceAmounts: Map<String, int>.from(serviceCenter['Service_Amounts']),
                         email: serviceCenter['Email'],
-                        rating: (serviceCenter['rate'] ?? 0.0).toDouble(),
-
+                        rating: double.parse(((serviceCenter['rate'] ?? 0.0).toDouble()).toStringAsFixed(1)),
                       ),
                     );
                   },

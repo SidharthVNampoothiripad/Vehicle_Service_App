@@ -54,7 +54,7 @@ List<String> imagePaths = [
                         imageIndex++ % imagePaths.length], // Get the image path based on the current index
                 distance: centerData['distance'] != null ? centerData['distance'].toDouble() : 0.0,
                 serviceAmounts: Map<String, int>.from(centerData['Service_Amounts']),
-                rating: (centerData['rate'] ?? 0.0).toDouble(),
+                 rating: double.parse(((centerData['rate'] ?? 0.0).toDouble()).toStringAsFixed(1)),
               );
             },
           );

@@ -69,69 +69,75 @@ class OrdersCompleted extends StatelessWidget {
               String serviceCenterName = snapshot.data!.get('Service Center Name');
 
               return Column(
-                children: [
-                  ListTile(
-                    title: Text(
-                      'Order ${index + 1}',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Service Center Name: $serviceCenterName',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Service Centre Email: $userEmail',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          'Selected Services: $selectedServices',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          'Total Amount: $totalAmount',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          'Ordered Date: $orderedDate',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          'Ordered Time: $orderedTime',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    trailing: SizedBox(
-                      width: 150,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RatingSubmissionPage(userEmail: userEmail),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 17, horizontal: 17),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(22),
-                          ),
-                           backgroundColor: Color.fromARGB(255, 16, 91, 42),
-                        ),
-                        child: Text(
-                          'Rate Us',
-                          style: TextStyle(color: Colors.white,fontSize:15,),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Divider(),
-                ],
-              );
+  children: [
+    Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: ListTile(
+            title: Text(
+              'Order ${index + 1}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Service Center Name: $serviceCenterName',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'Service Centre Email: $userEmail',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Selected Services: $selectedServices',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Total Amount: $totalAmount',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Ordered Date: $orderedDate',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Ordered Time: $orderedTime',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+    SizedBox(height: 10), // Adding some space between the texts and the button
+    ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RatingSubmissionPage(userEmail: userEmail),
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+        ),
+        backgroundColor: Color.fromARGB(255, 16, 91, 42),
+      ),
+      child: Text(
+        'Rate Us',
+        style: TextStyle(color: Colors.white, fontSize: 15),
+      ),
+    ),
+    Divider(),
+  ],
+);
+
             },
           );
         },

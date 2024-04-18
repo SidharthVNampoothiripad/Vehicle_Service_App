@@ -10,7 +10,6 @@ import 'search_page.dart';
 import 'carousel.dart';
 import 'user_details.dart';
 
-
 class CarServiceHomePage extends StatefulWidget {
   @override
   State<CarServiceHomePage> createState() => _CarServiceHomePageState();
@@ -18,6 +17,8 @@ class CarServiceHomePage extends StatefulWidget {
 
 class _CarServiceHomePageState extends State<CarServiceHomePage> {
   late Future<List<DocumentSnapshot>> _serviceCentres;
+  List<Map<String, dynamic>>? _weightedScores;
+
   List<String> imagePaths = [
     'assets/img1.png',
     'assets/img2.png',
@@ -33,30 +34,32 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
   double? userLong;
 
   @override
-void initState() {
-  super.initState();
-  _serviceCentres = _fetchServiceCentres(); // Initialize _serviceCentres with the future
-  _getLocationAndStore(); // Call the method to get location and store it
-}
-    Future<List<DocumentSnapshot>> _fetchServiceCentres() async {
-  try {
-    // Fetch the list of service centers from Firestore
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('Service_Centres').get();
-    List<DocumentSnapshot> serviceCentres = querySnapshot.docs;
-    return serviceCentres;
-  } catch (e) {
-    print('Error fetching service centers: $e');
-    return []; // Return an empty list in case of error
+  void initState() {
+    super.initState();
+    _serviceCentres = _fetchServiceCentres();
+    _getLocationAndStore();
   }
-}
 
-  // Method to get the user's location and store it in Firestore
+  Future<List<DocumentSnapshot>> _fetchServiceCentres() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Service_Centres')
+          .orderBy('score', descending: true) // Sort by score in descending order
+          .get();
+      List<DocumentSnapshot> serviceCentres = querySnapshot.docs;
+      return serviceCentres;
+    } catch (e) {
+      print('Error fetching service centers: $e');
+      return [];
+    }
+  }
+
   _getLocationAndStore() async {
     try {
       LocationPermission permission = await Geolocator.requestPermission();
 
-      if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
-        // Permissions granted, proceed to get the location
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
         Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
         );
@@ -64,23 +67,22 @@ void initState() {
           userLat = position.latitude;
           userLong = position.longitude;
         });
-        
-        // Get the current user's email
+
         String? email = FirebaseAuth.instance.currentUser?.email;
         if (email != null) {
-          // Store latitude and longitude in Firestore under Users collection with the document ID as the email
           await FirebaseFirestore.instance.collection('Users').doc(email).update({
-              'latitude': userLat,
-              'longitude': userLong,
+            'latitude': userLat,
+            'longitude': userLong,
           });
         } else {
           print('Error getting user email: User is not logged in');
         }
-        
-        // Call the method to calculate and store distances
+
         await LocationCalculation().calculateAndStoreDistance();
+        
+        // Calculate and store scores after distances are calculated
+        await LocationCalculation().calculateAndStoreScores();
       } else {
-        // Permissions not granted, handle accordingly (show a message, ask again, etc.)
         print('Location permission denied.');
       }
     } catch (e) {
@@ -126,7 +128,7 @@ void initState() {
           padding: EdgeInsets.zero,
           children: <Widget>[
             SizedBox(
-              height: 80, // Adjust the height of the DrawerHeader
+              height: 80,
               child: DrawerHeader(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
@@ -138,7 +140,7 @@ void initState() {
                     'FixFlow',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18, // Adjust the font size as needed
+                      fontSize: 18,
                     ),
                   ),
                 ),
@@ -147,10 +149,10 @@ void initState() {
             ListTile(
               title: Text('My Orders'),
               onTap: () {
-                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => OrderPage()),
-                  );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OrderPage()),
+                );
               },
             ),
             ListTile(
@@ -163,59 +165,48 @@ void initState() {
           ],
         ),
       ),
-    body: Container(
-      color: Color.fromARGB(255, 250, 223, 255),
-      child: FutureBuilder<List<DocumentSnapshot>>(
-        future: _serviceCentres,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: Container(
+        color: Color.fromARGB(255, 250, 223, 255),
+        child: FutureBuilder<List<DocumentSnapshot>>(
+          future: _serviceCentres,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
 
-          List<DocumentSnapshot> serviceCentres = snapshot.data!;
+            List<DocumentSnapshot> serviceCentres = snapshot.data!;
 
-          // Sort service centers based on distance
-          serviceCentres.sort((a, b) {
-            double distanceA = a['distance'] ?? double.infinity;
-            double distanceB = b['distance'] ?? double.infinity;
-            return distanceA.compareTo(distanceB);
-          });
-
-          return ListView(
-            children: <Widget>[
-              CustomCarousel(),
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Service Centers Recommended For You',
-                  style:
-                      TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            return ListView(
+              children: <Widget>[
+                CustomCarousel(),
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Service Centers Recommended For You',
+                    style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              // Display sorted service centers
-              for (var serviceCenter in serviceCentres)
-                ServiceCenterCard(
-  name: serviceCenter['Service Center Name'],
-  location: serviceCenter['Location'],
-  phoneNumber: serviceCenter['Phone Number'],
-  imagePath: imagePaths[
-      imageIndex++ % imagePaths.length], // Get the image path based on the current index
-  services: List<String>.from(
-      serviceCenter['Services_offered']),
-  distance: (serviceCenter['distance'] ?? 0.0).toDouble(), // Use the stored distance
-  email:serviceCenter['Email'],
-  serviceAmounts: Map<String, int>.from(serviceCenter['Service_Amounts']),
-  rating: (serviceCenter['rate'] ?? 0.0).toDouble(), // Pass service amounts
-),
-            ],
-          );
-        },
+                for (var serviceCenter in serviceCentres)
+                  ServiceCenterCard(
+                    name: serviceCenter['Service Center Name'],
+                    location: serviceCenter['Location'],
+                    phoneNumber: serviceCenter['Phone Number'],
+                    imagePath: imagePaths[imageIndex++ % imagePaths.length],
+                    services: List<String>.from(serviceCenter['Services_offered']),
+                    distance: (serviceCenter['distance'] ?? 0.0).toDouble(),
+                    email: serviceCenter['Email'],
+                    serviceAmounts: Map<String, int>.from(serviceCenter['Service_Amounts']),
+                    rating: double.parse(((serviceCenter['rate'] ?? 0.0).toDouble()).toStringAsFixed(1)),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

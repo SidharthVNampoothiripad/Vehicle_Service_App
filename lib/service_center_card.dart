@@ -84,11 +84,11 @@ import 'service_center_detail_page.dart';class ServiceCenterCard extends Statele
                       ),
                       SizedBox(width: 4.0),
                       Text(
-                        rating.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+  rating.toStringAsFixed(1),
+  style: TextStyle(
+    fontWeight: FontWeight.bold,
+  ),
+),
                     ],
                   ),
                 ),

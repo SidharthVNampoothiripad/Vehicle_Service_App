@@ -108,46 +108,49 @@ class _LoginPageState extends State<LoginPage> {
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () async {
-              // Validate the form
-              if (_formKey.currentState!.validate()) {
-                // If the form is valid, attempt to sign in
-                try {
-                  UserCredential userCredential =
-                      await _auth.signInWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  );
-                 // Get the current user
-                  User? user = userCredential.user;
-                  // Check if user is not null and display name is not set
-                  if (user != null && user.displayName == null) {
-                    // Set the display name in Firebase Auth
-                    await user.updateDisplayName(_emailController.text);
-                  }
-                  // If login is successful, move to the home page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CarServiceHomePage(),
-                    ),
-                  );
-
-                  // Get user UID for demonstration
-                 String uid = userCredential.user!.uid;
-                print('User UID: $uid');
-  } catch (e) {
-    // Handle login failure (incorrect credentials)
-    print('Login failed: $e');
-    // Show error message to user
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Incorrect Password or Invalid email'),
-      ),
-    );
-  }
-} 
-            },
+         onPressed: () async {
+  // Validate the form
+  if (_formKey.currentState!.validate()) {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      
+      // Get the current user
+      User? user = userCredential.user;
+      
+      // Check if user is not null and display name is not set
+      if (user != null && user.displayName == null) {
+        // Set the display name in Firebase Auth
+        await user.updateDisplayName(_emailController.text);
+      }
+      
+      // Get user UID for demonstration
+      String uid = userCredential.user!.uid;
+      print('User UID: $uid');
+      
+      // Ensure the context is still active before navigating
+      if (mounted) {
+        // If login is successful, move to the home page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CarServiceHomePage(),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle login failure (incorrect credentials)
+      print('Login failed: $e');
+      // Show error message to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Incorrect Password or Invalid email'),
+        ),
+      );
+    }
+  }          },
             style: ElevatedButton.styleFrom(
               shape: const StadiumBorder(),
               padding: const EdgeInsets.symmetric(vertical: 16),

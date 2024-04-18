@@ -241,9 +241,9 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
                 );
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 31),
+                          padding: EdgeInsets.symmetric(vertical: 11, horizontal: 31),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(22),
+                            borderRadius: BorderRadius.circular(23),
                           ),
                            backgroundColor: const Color.fromRGBO(156, 39, 176, 1),
                         ),
