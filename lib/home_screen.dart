@@ -99,7 +99,7 @@ void initState() {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color.fromARGB(255, 250, 223, 255),
+        backgroundColor: Color.fromARGB(255, 207, 173, 210),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.search),
@@ -164,7 +164,7 @@ void initState() {
         ),
       ),
     body: Container(
-      color: Color.fromARGB(255, 207, 173, 210),
+      color: Color.fromARGB(255, 250, 223, 255),
       child: FutureBuilder<List<DocumentSnapshot>>(
         future: _serviceCentres,
         builder: (context, snapshot) {
@@ -191,9 +191,9 @@ void initState() {
               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Service Centers Near You',
+                  'Service Centers Recommended For You',
                   style:
-                      TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                 ),
               ),
               // Display sorted service centers
@@ -206,9 +206,10 @@ void initState() {
       imageIndex++ % imagePaths.length], // Get the image path based on the current index
   services: List<String>.from(
       serviceCenter['Services_offered']),
-  distance: serviceCenter['distance'] ?? 0.0, // Use the stored distance
+  distance: (serviceCenter['distance'] ?? 0.0).toDouble(), // Use the stored distance
   email:serviceCenter['Email'],
-  serviceAmounts: Map<String, int>.from(serviceCenter['Service_Amounts']), // Pass service amounts
+  serviceAmounts: Map<String, int>.from(serviceCenter['Service_Amounts']),
+  rating: (serviceCenter['rate'] ?? 0.0).toDouble(), // Pass service amounts
 ),
             ],
           );

@@ -8,8 +8,8 @@ class OrderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Orders'),
-        backgroundColor: Color.fromARGB(255, 169, 170, 255),
+        title: Text('My Orders'),
+        backgroundColor: Color.fromARGB(255, 207, 173, 210),
       ),
       backgroundColor: Color.fromARGB(255, 250, 223, 255),
       body: Center(

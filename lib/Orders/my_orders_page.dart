@@ -8,8 +8,8 @@ class OrdersPendingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Orders'),
-        backgroundColor: Color.fromARGB(255, 182, 200, 247),
+        title: Text('Pending Orders'),
+        backgroundColor: Color.fromARGB(255, 207, 173, 210),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance

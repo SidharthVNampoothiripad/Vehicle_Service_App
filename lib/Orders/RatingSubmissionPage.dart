@@ -11,7 +11,7 @@ class RatingSubmissionPage extends StatefulWidget {
 }
 
 class _RatingSubmissionPageState extends State<RatingSubmissionPage> {
-  double rating = 0;
+  double rate = 0;
   bool hasExistingRating = false;
   double existingRating = 0;
 
@@ -24,10 +24,10 @@ class _RatingSubmissionPageState extends State<RatingSubmissionPage> {
         .doc(widget.userEmail)
         .get()
         .then((doc) {
-      if (doc.exists && doc.data()!['rating'] != null) {
+      if (doc.exists && doc.data()!['rate'] != null) {
         setState(() {
           hasExistingRating = true;
-          existingRating = doc.data()!['rating'];
+          existingRating = doc.data()!['rate'];
         });
       }
     });
@@ -49,7 +49,7 @@ body: Center(
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       RatingBar.builder(
-        initialRating: rating,
+        initialRating: rate,
         minRating: 1,
         direction: Axis.horizontal,
         allowHalfRating: false,
@@ -61,7 +61,7 @@ body: Center(
         ),
         onRatingUpdate: (newRating) {
           setState(() {
-            rating = newRating;
+            rate = newRating;
           });
         },
       ),
@@ -69,19 +69,19 @@ body: Center(
       ElevatedButton(
         onPressed: () {
           double newRatingValue = hasExistingRating
-              ? (existingRating + rating) / 2
-              : rating;
+              ? (existingRating + rate) / 2
+              : rate;
           FirebaseFirestore.instance
               .collection('Service_Centres')
               .doc(widget.userEmail)
-              .update({'rating': newRatingValue})
+              .update({'rate': newRatingValue})
               .then((value) => print('Rating updated successfully'))
               .catchError((error) => print('Failed to update rating: $error'));
         },
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 26),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(22),
           ),
           backgroundColor: Colors.purple.withOpacity(0.9),
         ),

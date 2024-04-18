@@ -241,7 +241,7 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
                 );
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 17, horizontal: 25),
+                          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 31),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(22),
                           ),
@@ -249,7 +249,7 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
                         ),
                         child: Text(
                           'Order',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white,fontSize:15,),
                         ),
                       ),
                     ],

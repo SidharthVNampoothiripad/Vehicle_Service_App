@@ -1,6 +1,5 @@
 
-
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'service_center_detail_page.dart';class ServiceCenterCard extends StatelessWidget {
   final String name;
   final String phoneNumber;
@@ -9,6 +8,7 @@ import 'service_center_detail_page.dart';class ServiceCenterCard extends Statele
   final String imagePath;
   final double distance;
   final String email;
+  final double rating;
   final Map<String, int> serviceAmounts;
 
   ServiceCenterCard({
@@ -19,10 +19,10 @@ import 'service_center_detail_page.dart';class ServiceCenterCard extends Statele
     required this.imagePath,
     required this.distance,
     required this.serviceAmounts,
-    required this.email // Add service amounts parameter
+    required this.rating,
+    required this.email,
   });
 
-  get rating => 0;
 
   @override
   Widget build(BuildContext context) {

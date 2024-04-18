@@ -116,15 +116,15 @@ class OrdersCompleted extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          padding: EdgeInsets.symmetric(vertical: 17, horizontal: 17),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(22),
                           ),
-                           backgroundColor: Color.fromARGB(255, 25, 87, 46).withOpacity(0.9),
+                           backgroundColor: Color.fromARGB(255, 16, 91, 42),
                         ),
                         child: Text(
-                          'Rate us',
-                          style: TextStyle(color: Colors.white),
+                          'Rate Us',
+                          style: TextStyle(color: Colors.white,fontSize:15,),
                         ),
                       ),
                     ),
