@@ -22,7 +22,7 @@ class ServiceCenterDetailsPage extends StatefulWidget {
     required this.distance,
     required this.services,
     required this.serviceAmounts,
-    required this.email
+    required this.email,
   });
 
   @override
@@ -40,64 +40,75 @@ class _ServiceCenterDetailsPageState extends State<ServiceCenterDetailsPage> {
         List.generate(widget.services.length, (index) => false);
   }
 
-void placeOrder(String userEmail, String serviceCenterName, List<String> selectedServices, int totalAmount) async {
-  try {
-    // Get current user's details from Firestore Users collection
-    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('Users').doc(userEmail).get();
-    if (userSnapshot.exists) {
-      // Retrieve user details
-      String userName = userSnapshot.get('Name');
-      String userLocation = userSnapshot.get('Location');
-      String userPhoneNumber = userSnapshot.get('Phone Number');
+  void placeOrder(
+      String userEmail, String serviceCenterName, List<bool> selectedServices, int totalAmount) async {
+    try {
+      // Get current user's details from Firestore Users collection
+      DocumentSnapshot userSnapshot =
+          await FirebaseFirestore.instance.collection('Users').doc(userEmail).get();
+      if (userSnapshot.exists) {
+        // Retrieve user details
+        String userName = userSnapshot.get('Name');
+        String userLocation = userSnapshot.get('Location');
+        String userPhoneNumber = userSnapshot.get('Phone Number');
 
-      // Get a reference to the service center's document
-      DocumentReference serviceCenterRef = FirebaseFirestore.instance.collection('Orders_placed').doc(widget.email);
+        // Get a reference to the service center's document
+        DocumentReference serviceCenterRef =
+            FirebaseFirestore.instance.collection('Orders_placed').doc(widget.email);
 
-      // Add a subcollection with the user's email as its ID
-      CollectionReference ordersCollection = serviceCenterRef.collection('orders');
+        // Add a subcollection with the user's email as its ID
+        CollectionReference ordersCollection = serviceCenterRef.collection('orders');
 
-      // Get current timestamp
-      Timestamp currentTimeStamp = Timestamp.now();
+        // Get current timestamp
+        Timestamp currentTimeStamp = Timestamp.now();
 
-      // Format the ordered date
-      String orderedDate = DateFormat.yMMMMd().format(currentTimeStamp.toDate());
+        // Format the ordered date
+        String orderedDate = DateFormat.yMMMMd().format(currentTimeStamp.toDate());
 
-      // Format the ordered time
-      String orderedTime = DateFormat.jm().format(currentTimeStamp.toDate());
+        // Format the ordered time
+        String orderedTime = DateFormat.jm().format(currentTimeStamp.toDate());
 
-      await ordersCollection.doc(userEmail).set({
-        'userEmail': userEmail,
-        'userName': userName,
-        'userLocation': userLocation,
-        'userPhoneNumber': userPhoneNumber,
-        'serviceCenterName': serviceCenterName,
-        'selectedServices': selectedServices,
-        'totalAmount': totalAmount,
-        'orderedDate': orderedDate,
-        'orderedTime': orderedTime,
-      });
-      print('Order placed successfully');
+        // Filter selected services
+        List<String> selectedServicesList = [];
+        for (int i = 0; i < selectedServices.length; i++) {
+          if (selectedServices[i]) {
+            selectedServicesList.add(widget.services[i]);
+          }
+        }
 
-      // Creating another collection 'orders_placed2' with current user's email as ID
-      DocumentReference userOrdersRef = FirebaseFirestore.instance.collection('orders_placed2').doc(userEmail);
-      CollectionReference userOrdersCollection = userOrdersRef.collection('orders');
-      await userOrdersCollection.doc(widget.email).set({
-        'serviceCenterName': serviceCenterName,
-        'selectedServices': selectedServices,
-        'totalAmount': totalAmount,
-        'orderedDate': orderedDate,
-        'orderedTime': orderedTime,
-      });
-      print('Order placed in orders_placed2 successfully');
-      print(widget.email);
-    } else {
-      print('User details not found');
+        await ordersCollection.doc(userEmail).set({
+          'userEmail': userEmail,
+          'userName': userName,
+          'userLocation': userLocation,
+          'userPhoneNumber': userPhoneNumber,
+          'serviceCenterName': serviceCenterName,
+          'selectedServices': selectedServicesList,
+          'totalAmount': totalAmount,
+          'orderedDate': orderedDate,
+          'orderedTime': orderedTime,
+        });
+        print('Order placed successfully');
+
+        // Creating another collection 'orders_placed2' with current user's email as ID
+        DocumentReference userOrdersRef =
+            FirebaseFirestore.instance.collection('orders_placed2').doc(userEmail);
+        CollectionReference userOrdersCollection = userOrdersRef.collection('orders');
+        await userOrdersCollection.doc(widget.email).set({
+          'serviceCenterName': serviceCenterName,
+          'selectedServices': selectedServicesList,
+          'totalAmount': totalAmount,
+          'orderedDate': orderedDate,
+          'orderedTime': orderedTime,
+        });
+        print('Order placed in orders_placed2 successfully');
+        print(widget.email);
+      } else {
+        print('User details not found');
+      }
+    } catch (e) {
+      print('Error placing order: $e');
     }
-  } catch (e) {
-    print('Error placing order: $e');
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -233,23 +244,23 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
                           
                           String? userEmail = FirebaseAuth.instance.currentUser?.email;
                           if (userEmail != null) {
-                            placeOrder(userEmail, widget.name, widget.services, totalAmount);
+                            placeOrder(userEmail, widget.name, selectedServices, totalAmount); // Changed parameter to selectedServices
                           }
                           Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UpiPaymentPage()),
-                );
+                            context,
+                            MaterialPageRoute(builder: (context) => UpiPaymentPage()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 11, horizontal: 31),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(23),
                           ),
-                           backgroundColor: const Color.fromRGBO(156, 39, 176, 1),
+                          backgroundColor: const Color.fromRGBO(156, 39, 176, 1),
                         ),
                         child: Text(
                           'Order',
-                          style: TextStyle(color: Colors.white,fontSize:15,),
+                          style: TextStyle(color: Colors.white, fontSize: 15,),
                         ),
                       ),
                     ],
