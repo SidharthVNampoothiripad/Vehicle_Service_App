@@ -230,7 +230,7 @@ void placeOrder(String userEmail, String serviceCenterName, List<String> selecte
                       SizedBox(height: 16.0),
                       ElevatedButton(
                         onPressed: () {
-                          // Assuming you have the user's email stored in a variable called 'userEmail'
+                          
                           String? userEmail = FirebaseAuth.instance.currentUser?.email;
                           if (userEmail != null) {
                             placeOrder(userEmail, widget.name, widget.services, totalAmount);

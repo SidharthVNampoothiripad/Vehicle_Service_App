@@ -70,10 +70,10 @@ class UserProfile extends StatelessWidget {
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                          backgroundColor: Colors.purple, // Violet color
-                          foregroundColor: Colors.white, // White text color
+                          backgroundColor: Colors.purple, 
+                          foregroundColor: Colors.white, 
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20), // Rounded edges
+                            borderRadius: BorderRadius.circular(20), 
                           ),
                         ),
                         child: Text('Sign Out', style: TextStyle(fontSize: 17.0)),

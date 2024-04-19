@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hellogram/order_page.dart';
+import 'package:hellogram/home_screen.dart';
 
 class RatingSubmissionPage extends StatefulWidget {
   final String userEmail;
@@ -29,7 +29,7 @@ class _RatingSubmissionPageState extends State<RatingSubmissionPage> {
   if (doc.exists && doc.data()!['rate'] != null) {
     setState(() {
       hasExistingRating = true;
-      existingRating = (doc.data()!['rate'] as num).toDouble(); // Cast to double
+      existingRating = (doc.data()!['rate'] as num).toDouble(); 
     });
       }
     });
@@ -83,7 +83,7 @@ class _RatingSubmissionPageState extends State<RatingSubmissionPage> {
           // Navigate to OrdersCompleted page and show snackbar
           Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => OrderPage()),
+                MaterialPageRoute(builder: (context) => CarServiceHomePage()),
               );;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

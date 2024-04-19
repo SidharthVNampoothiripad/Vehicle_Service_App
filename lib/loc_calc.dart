@@ -5,44 +5,43 @@ import 'package:geolocator/geolocator.dart';
 class LocationCalculation {
   Future<void> calculateAndStoreDistance() async {
     try {
-      // Get the current user's email
+
       String? email = FirebaseAuth.instance.currentUser?.email;
 
-      // Informative message if user is not logged in
+
       if (email == null) {
         print('Error: User is not logged in. Distance calculation requires valid user location data.');
-        return; // Early exit if user is not logged in
+        return; 
       }
 
-      // Get a reference to the user's document in Firestore
+    
       DocumentReference userRef = FirebaseFirestore.instance.collection('Users').doc(email);
 
       try {
-        // Retrieve the user's document
+        
         DocumentSnapshot userSnapshot = await userRef.get();
 
-        // Check if user document exists and has valid latitude/longitude data
+        
         if (userSnapshot.exists) {
           double userLatitude = userSnapshot['latitude'];
           double userLongitude = userSnapshot['longitude'];
 
-          // Get a reference to the 'Service_Centres' collection
+          
           CollectionReference serviceCentersCollection = FirebaseFirestore.instance.collection('Service_Centres');
 
-          // Retrieve the documents from the 'Service_Centres' collection
+          
           QuerySnapshot serviceCentersSnapshot = await serviceCentersCollection.get();
 
-          // Calculate distances and update documents with distances
+          
           await Future.forEach(serviceCentersSnapshot.docs, (DocumentSnapshot doc) async {
             try {
               // Get service center's latitude and longitude
               double centerLat = doc['locValue']['latitude'];
               double centerLong = doc['locValue']['longitude'];
 
-              // Calculate distance between user and service center using the Haversine formula (in meters)
               double distanceInMeters = Geolocator.distanceBetween(userLatitude, userLongitude, centerLat, centerLong);
 
-              // Convert distance from meters to kilometers
+              
               double distanceInKilometers = distanceInMeters / 1000;
 
               // Format the distance to have two decimal places

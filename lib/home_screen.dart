@@ -155,13 +155,8 @@ class _CarServiceHomePageState extends State<CarServiceHomePage> {
                 );
               },
             ),
-            ListTile(
-              title: Text('Favourites'),
-              onTap: () {
-                // Add navigation logic here
-              },
-            ),
-            // Add more ListTiles for additional items in the drawer
+            
+            
           ],
         ),
       ),
