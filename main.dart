@@ -5,14 +5,7 @@ import 'login_page.dart';
 import 'home_screen.dart';
 void main()  async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-       apiKey: "AIzaSyB0stCkFLyNFJI20FmE0zaFzTP2KBPEY70",
-        appId: "1:354057994820:android:931f4b3af4c6011154b211",
-        messagingSenderId: "354057994820",
-        projectId: "fixflow-e3983",
-        storageBucket: "fixflow-e3983.appspot.com"),
-  );
+
 
   runApp(CarServiceApp());
 }
